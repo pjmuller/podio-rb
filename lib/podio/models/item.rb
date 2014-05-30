@@ -141,7 +141,11 @@ class Podio::Item < ActivePodio::Base
     def find_by_filter_values(app_id, filter_values, attributes={})
       attributes[:filters] = filter_values
       collection Podio.connection.post { |req|
-        req.url "/item/app/#{app_id}/filter/"
+        # filter out attributes that need to be served as query string parameters
+        options = attributes.select {|k| ['fields'].include? k }
+        attributes.reject! {|k| ['fields'].include? k }
+
+        req.url("/item/app/#{app_id}/filter/", options)
         req.body = attributes
       }.body
     end
