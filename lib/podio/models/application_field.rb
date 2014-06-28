@@ -17,5 +17,9 @@ class Podio::ApplicationField < ActivePodio::Base
       member Podio.connection.get("/app/#{app_id}/field/#{field_id}").body
     end
 
+    def update(app_id, field_id, attributes)
+      Podio.connection.put("/app/#{app_id}/field/#{field_id}", attributes).status
+    end
+
   end
 end
