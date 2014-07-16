@@ -4,13 +4,13 @@ module Podio
   module Middleware
     class ErrorResponse < Faraday::Response::Middleware
       def on_complete(env)
-        error_class = case env[:status]
+        # extra logger during development to keep an eye on rate limit
+        # not be merged into Podio dev.
+        if env[:response_headers]['x-rate-limit-remaining'].present? and env[:response_headers]['x-rate-limit-limit'].present?
+          Rails.logger.info("[Request to podio] [x-rate-limit-remaining] #{env[:response_headers]['x-rate-limit-remaining']} [x-rate-limit-limit] #{env[:response_headers]['x-rate-limit-limit']}")
+        end
 
-          # extra logger during development to keep an eye on rate limit
-          # not be merged into Podio dev.
-          if env[:response_headers]['x-rate-limit-remaining'].present? and env[:response_headers]['x-rate-limit-limit'].present?
-            Rails.logger.info("[Request to podio] [x-rate-limit-remaining] #{env[:response_headers]['x-rate-limit-remaining']} [x-rate-limit-limit] #{env[:response_headers]['x-rate-limit-limit']}")
-          end
+        error_class = case env[:status]
 
           when 200, 204
             # pass
