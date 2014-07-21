@@ -154,6 +154,11 @@ class Podio::Item < ActivePodio::Base
       response.body
     end
 
+    # @see https://developers.podio.com/doc/items/get-item-values-v2-144280791
+    def find_values_v2(item_id)
+      Podio.connection.get("/item/#{item_id}/value/v2").body
+    end
+
     # @see https://developers.podio.com/doc/items/get-item-references-22439
     def find_references(item_id)
       response = Podio.connection.get { |req|
