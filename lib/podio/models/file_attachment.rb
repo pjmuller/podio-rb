@@ -37,8 +37,11 @@ class Podio::FileAttachment < ActivePodio::Base
     'file'
   end
 
-  def raw_data
-    Podio.connection.get(self.link).body
+  # Returns the raw bytes of a file
+  # for images pass the size used by podio in its urls e.g. https://files.podio.com/:file/medium
+  def raw_data(size=nil)
+    link = size ? "#{self.link}/#{size}" : self.link
+    Podio.connection.get(link).body
   end
 
   class << self
@@ -93,6 +96,13 @@ class Podio::FileAttachment < ActivePodio::Base
       Podio.client.connection.get{ |req|
         req.url("/file/#{id}/raw", options)
       }.body
+    end
+
+    # Static alternative to instance raw_data method
+    def find_raw_data(id, size=nil)
+      link = "https://files.podio.com/#{id}"
+      link += "/#{size}" if size
+      Podio.connection.get(link).body
     end
 
     # @see https://developers.podio.com/doc/files/get-files-on-app-22472
