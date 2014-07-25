@@ -92,10 +92,8 @@ class Podio::FileAttachment < ActivePodio::Base
     end
 
     # @see https://developers.podio.com/doc/files/download-file-1004147
-    def find_raw(id, options = {})
-      Podio.client.connection.get{ |req|
-        req.url("/file/#{id}/raw", options)
-      }.body
+    def find_raw(id)
+      Podio.client.connection.get("/file/#{id}/raw").body
     end
 
     # Static alternative to instance raw_data method
