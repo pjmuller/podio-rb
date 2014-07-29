@@ -9,4 +9,7 @@ platforms :rbx do
   gem 'rubysl-test-unit', '~> 2.0.3'
 end
 
+# temp for coloring output
+gem 'colorize'
+
 gemspec
