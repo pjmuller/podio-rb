@@ -42,6 +42,10 @@ class Podio::Experiment < ActivePodio::Base
       list Podio.connection.get('/experiment/').body
     end
 
+    def find(experiment)
+      member Podio.connection.get("/experiment/#{experiment}").body
+    end
+
     def create_variation(experiment, variation)
       Podio.connection.post("/experiment/#{experiment}/variation/#{variation}")
     end
@@ -52,6 +56,10 @@ class Podio::Experiment < ActivePodio::Base
 
     def deactivate_variation(experiment, variation)
       Podio.connection.post("/experiment/#{experiment}/variation/#{variation}/deactivate")
+    end
+
+    def delete_variation(experiment, variation)
+      Podio.connection.delete("/experiment/#{experiment}/variation/#{variation}")
     end
 
     def update_variation_weight(experiment, variation, weight)
