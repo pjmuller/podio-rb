@@ -7,7 +7,8 @@ module Podio
         # extra logger during development to keep an eye on rate limit
         # not be merged into Podio dev.
         if env[:response_headers]['x-rate-limit-remaining'].present? and env[:response_headers]['x-rate-limit-limit'].present?
-          Rails.logger.info("[PODIO API]".colorize(color: :black, background: env[:response_headers]['x-rate-limit-limit'].to_i <= 5000 ? :light_cyan : :light_magenta)+" [x-rate-limit-remaining] #{env[:response_headers]['x-rate-limit-remaining']} [x-rate-limit-limit] #{env[:response_headers]['x-rate-limit-limit']}")
+          # Rails.logger.info()
+          puts "[PODIO API]".colorize(color: :black, background: env[:response_headers]['x-rate-limit-limit'].to_i <= 5000 ? :light_cyan : :light_magenta)+" x.rate.limit.remaining=#{env[:response_headers]['x-rate-limit-remaining']} x.rate.limit.limit=#{env[:response_headers]['x-rate-limit-limit']}"
         end
 
         error_class = case env[:status]
