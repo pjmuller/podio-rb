@@ -1,7 +1,7 @@
 module Podio
   class Client
     attr_reader :api_url, :api_key, :api_secret, :oauth_token, :connection, :trusted_connection
-    attr_accessor :stubs, :current_http_client, :headers
+    attr_accessor :stubs, :current_http_client, :headers, :email, :rate_limited_max, :rate_limited_current, :no_rate_limited_max, :no_rate_limited_current
 
     def initialize(options = {})
       @api_url = options[:api_url] || 'https://api.podio.com'
@@ -11,6 +11,7 @@ module Podio
       @oauth_token = options[:oauth_token]
       @headers = options[:custom_headers] || {}
       @adapter = options[:adapter] || Faraday.default_adapter
+      @email = options[:email]
 
       if options[:enable_stubs]
         @enable_stubs = true

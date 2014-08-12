@@ -4,11 +4,16 @@ module Podio
   module Middleware
     class ErrorResponse < Faraday::Response::Middleware
       def on_complete(env)
-        # extra logger during development to keep an eye on rate limit
+        # Store the x-rates in the client as to keep an eye on the limits during development
         # not be merged into Podio dev.
         if env[:response_headers]['x-rate-limit-remaining'].present? and env[:response_headers]['x-rate-limit-limit'].present?
-          # Rails.logger.info()
-          puts "[PODIO API]".colorize(color: :black, background: env[:response_headers]['x-rate-limit-limit'].to_i <= 5000 ? :light_cyan : :light_magenta)+" x.rate.limit.remaining=#{env[:response_headers]['x-rate-limit-remaining']} x.rate.limit.limit=#{env[:response_headers]['x-rate-limit-limit']}"
+          if(env[:response_headers]['x-rate-limit-limit'].to_i < 5000)
+            Podio::client.rate_limited_max = env[:response_headers]['x-rate-limit-limit']
+            Podio::client.rate_limited_current =  env[:response_headers]['x-rate-limit-remaining']
+          else
+            Podio::client.no_rate_limited_max = env[:response_headers]['x-rate-limit-limit']
+            Podio::client.no_rate_limited_current =  env[:response_headers]['x-rate-limit-remaining']
+          end
         end
 
         error_class = case env[:status]
