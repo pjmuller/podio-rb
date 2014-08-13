@@ -9,6 +9,8 @@ class Podio::OAuthClient < ActivePodio::Base
   property :url, :string
   property :domain, :string
 
+  has_many :scope, :class => 'OAuthScope'
+
   alias_method :id, :auth_client_id
 
   def create
@@ -69,9 +71,9 @@ class Podio::OAuthClient < ActivePodio::Base
     end
 
     def reset(id)
-       response = Podio.connection.post("/oauth/client/#{id}/reset")
-       response.status
-     end
+      response = Podio.connection.post("/oauth/client/#{id}/reset")
+      response.status
+    end
 
     def find_granted_clients()
       list Podio.connection.get("oauth/grant/client/").body
