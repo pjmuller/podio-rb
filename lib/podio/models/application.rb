@@ -112,18 +112,18 @@ class Podio::Application < ActivePodio::Base
     end
 
     # @see https://developers.podio.com/doc/applications/add-new-app-22351
-    def create(attributes)
+    def create(attributes, options = {})
       response = Podio.connection.post do |req|
-        req.url "/app/"
+        req.url("/app/", options)
         req.body = attributes
       end
       response.body['app_id']
     end
 
     # @see https://developers.podio.com/doc/applications/update-app-22352
-    def update(app_id, attributes)
+    def update(app_id, attributes, options = {})
       response = Podio.connection.put do |req|
-        req.url "/app/#{app_id}"
+        req.url("/app/#{app_id}", options)
         req.body = attributes
       end
       response.status
