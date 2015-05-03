@@ -18,6 +18,7 @@ class Podio::Space < ActivePodio::Base
   property :subscribed, :boolean
   property :privacy, :string
   property :auto_join, :boolean
+  property :archived, :boolean
   property :type, :string
   property :premium, :boolean
   property :last_activity_on, :datetime
@@ -124,7 +125,7 @@ class Podio::Space < ActivePodio::Base
     end
     
     def get_count(org_id)
-      Podio.connection.get("/space/org/#{org_id}").body['count']
+      Podio.connection.get("/space/org/#{org_id}/count").body['count']
     end
 
     def get_available_seats(space_id)

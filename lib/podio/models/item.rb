@@ -24,6 +24,7 @@ class Podio::Item < ActivePodio::Base
   property :references, :array
   property :refs, :array
   property :tags, :array
+  property :votes, :hash
   property :subscribed, :boolean
   property :pinned, :boolean
   property :user_ratings, :hash
@@ -48,6 +49,7 @@ class Podio::Item < ActivePodio::Base
   has_many :files, :class => 'FileAttachment'
   has_many :comments, :class => 'Comment'
   has_many :shares, :class => 'AppStoreShare'
+  has_one :current_revision, :class => 'ItemRevision'
   has_one :reminder, :class => 'Reminder'
   has_one :recurrence, :class => 'Recurrence'
   has_one :linked_account_data, :class => 'LinkedAccountData'
@@ -129,9 +131,9 @@ class Podio::Item < ActivePodio::Base
     end
 
     # @see https://developers.podio.com/doc/items/filter-items-by-view-4540284
-    def find_by_filter_id(app_id, filter_id, attributes)
+    def find_by_filter_id(app_id, filter_id, attributes, options={})
       collection Podio.connection.post { |req|
-        req.url "/item/app/#{app_id}/filter/#{filter_id}/"
+        req.url("/item/app/#{app_id}/filter/#{filter_id}/", options)
         req.body = attributes
       }.body
     end
@@ -247,10 +249,9 @@ class Podio::Item < ActivePodio::Base
     end
 
     # @see https://developers.podio.com/doc/items/delete-item-22364
-    def delete(id, attributes={}, options={})
+    def delete(id, options={})
       response = Podio.connection.delete do |req|
         req.url("/item/#{id}", options)
-        req.body = attributes
       end
 
       response.body

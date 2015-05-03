@@ -12,6 +12,7 @@ module Podio
       @headers = options[:custom_headers] || {}
       @adapter = options[:adapter] || Faraday.default_adapter
       @email = options[:email]
+      @request_options = options[:request_options] || {}
 
       if options[:enable_stubs]
         @enable_stubs = true
@@ -53,11 +54,14 @@ module Podio
     end
 
     # Sign in as a user using credentials
-    def authenticate_with_credentials(username, password)
+    def authenticate_with_credentials(username, password, offering_id=nil)
+      body = {:grant_type => 'password', :client_id => api_key, :client_secret => api_secret, :username => username, :password => password}
+      body[:offering_id] = offering_id if offering_id.present?
+
       response = @oauth_connection.post do |req|
         req.url '/oauth/token'
         req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        req.body = {:grant_type => 'password', :client_id => api_key, :client_secret => api_secret, :username => username, :password => password}
+        req.body = body
       end
 
       @oauth_token = OAuthToken.new(response.body)
@@ -178,12 +182,12 @@ module Podio
     end
 
     def configure_connection
-      Faraday::Connection.new(:url => api_url, :headers => configured_headers, :request => {:client => self}) do |builder|
+      Faraday::Connection.new(:url => api_url, :headers => configured_headers, :request => @request_options) do |builder|
         builder.use Middleware::JsonRequest
         builder.use Faraday::Request::Multipart
         builder.use Faraday::Request::UrlEncoded
-        builder.use Middleware::OAuth2
-        builder.use Middleware::Logger
+        builder.use Middleware::OAuth2, :podio_client => self
+        builder.use Middleware::Logger, :podio_client => self
 
         builder.adapter(*default_adapter)
 
@@ -199,7 +203,7 @@ module Podio
 
     def configure_oauth_connection
       conn = @connection.dup
-      conn.options[:client] = self
+      conn.options.update(@request_options)
       conn.headers.delete('authorization')
       conn.headers.delete('X-Podio-Dry-Run') if @test_mode # oauth requests don't really work well in test mode
       conn
@@ -207,7 +211,7 @@ module Podio
 
     def configure_trusted_connection
       conn = @connection.dup
-      conn.options[:client] = self
+      conn.options.update(@request_options)
       conn.headers.delete('authorization')
       conn.basic_auth(api_key, api_secret)
       conn
