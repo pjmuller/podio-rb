@@ -18,7 +18,7 @@ class Podio::Embed < ActivePodio::Base
   class << self
 
     # @see https://developers.podio.com/doc/embeds/add-an-embed-726483
-    # mode immediate or delayed
+    # mode: immediate or delayed
     def create(url, mode = 'immediate')
       response = Podio.connection.post do |req|
         req.url '/embed/'
