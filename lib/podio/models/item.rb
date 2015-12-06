@@ -192,7 +192,7 @@ class Podio::Item < ActivePodio::Base
     end
 
     # @see https://developers.podio.com/doc/items/get-item-count-34819997
-    # options are either filters {gender: 1} or a view {view_id: 123}
+    # options are either filters {gender: 1, firstname: "Joe"} or a view {view_id: 123}
     def item_count(app_id, options = {})
       Podio.connection.get { |req|
         req.url("/item/app/#{app_id}/count", options)
