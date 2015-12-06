@@ -18,10 +18,10 @@ class Podio::ExternalFile < ActivePodio::Base
       }.body
     end
 
-
-    def create_from_external_file_id(linked_account_id, external_file_id, preserve_permissions=false)
+    # DEPRECATED please use FileAttachment.create_from_external_id
+    def create_from_external_file_id(linked_account_id, external_file_id, preserve_permissions=false, options={})
       response = Podio.client.connection.post do |req|
-        req.url "/file/linked_account/#{linked_account_id}/"
+        req.url("/file/linked_account/#{linked_account_id}/", options)
         req.body = {
             :external_file_id     => external_file_id,
             :preserve_permissions => preserve_permissions
