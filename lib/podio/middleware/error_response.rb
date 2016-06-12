@@ -17,8 +17,7 @@ module Podio
         end
 
         error_class = case env[:status]
-
-          when 200, 204
+          when 200, 201, 204
             # pass
           when 304
             # pass
