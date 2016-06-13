@@ -119,6 +119,13 @@ class Podio::Profile < ActivePodio::Base
       Podio.connection.get("/contact/totals/v2/").body
     end
 
+    # @see https://developers.podio.com/doc/contacts/get-contact-totals-60467
+    def find_all(options = {})
+      Podio.connection.get { |req|
+        req.url("/contact/", options)
+      }.body
+    end
+
     # @see https://developers.podio.com/doc/contacts/get-skills-1346872
     def skills(options)
       Podio.connection.get { |req|
