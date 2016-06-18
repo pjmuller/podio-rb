@@ -132,6 +132,9 @@ class Podio::Space < ActivePodio::Base
       Podio.connection.get("/space/#{space_id}/available").body
     end
 
+    def space_dependencies(space_id)
+      Podio.connection.get("/space/#{space_id}/dependencies").body
+    end
   end
 end
 
