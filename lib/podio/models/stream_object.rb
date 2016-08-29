@@ -59,6 +59,13 @@ class Podio::StreamObject < ActivePodio::Base
       }.body
     end
 
+    # @see https://developers.podio.com/doc/stream/get-space-stream-v3-116373969
+    def find_all_by_space_id_v3(space_id, options={})
+      list Podio.connection.get { |req|
+        req.url("/stream/space/#{space_id}/v3/", options)
+      }.body
+    end
+
     # @see https://developers.podio.com/doc/stream/get-user-stream-1289318
     def find_all_by_user_id(user_id, options={})
       list Podio.connection.get { |req|

@@ -20,5 +20,10 @@ class Podio::ItemDiff < ActivePodio::Base
     def revert(item_id, revision_id)
       Podio.connection.delete("/item/#{item_id}/revision/#{revision_id}").body
     end
+
+    # @see https://developers.podio.com/doc/items/revert-to-revision-194362682
+    def revert_to_revision(item_id, revision_id)
+      Podio.connection.post("/item/#{item_id}/revision/#{revision_id}/revert_to").body
+    end
   end
 end
